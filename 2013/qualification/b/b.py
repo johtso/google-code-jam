@@ -1,5 +1,5 @@
 import sys
-from itertools import islice, izip, imap
+from itertools import islice, izip
 
 from utils import stripped_lines, ints
 
@@ -9,27 +9,24 @@ def possible(pattern):
     rows = pattern
     columns = izip(*pattern)
 
-    horizontal_impossible = []
-    vertical_impossible = []
+    impossible = set()
 
-    for x, row in enumerate(rows):
-        tallest = max(row)
-        for y, height in enumerate(row):
-            if height < tallest:
-                horizontal_impossible.append((x, y))
+    for swathes, is_vertical in [(rows, False), (columns, True)]:
+        for swathe_number, swathe in enumerate(swathes):
+            tallest = max(swathe)
+            for patch_number, height in enumerate(swathe):
+                if height < tallest:
+                    if is_vertical:
+                        location = (patch_number, swathe_number)
+                    else:
+                        location = (swathe_number, patch_number)
 
-    for y, column in enumerate(columns):
-        tallest = max(column)
-        for x, height in enumerate(column):
-            if height < tallest:
-                vertical_impossible.append((x, y))
+                    if location in impossible:
+                        return False
+                    else:
+                        impossible.add(location)
 
-    return not lists_overlap(horizontal_impossible, vertical_impossible)
-
-
-def lists_overlap(a, b):
-    sb = set(b)
-    return any(imap(sb.__contains__, a))
+    return True
 
 
 def main():
