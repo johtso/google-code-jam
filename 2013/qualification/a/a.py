@@ -13,8 +13,8 @@ def solve(grid):
         winner = winning(line)
         if winner:
             return '{} won'.format(winner)
-        elif not unfinished:
-            unfinished = '.' in line
+        elif not unfinished and '.' in line:
+            unfinished = True
     if unfinished:
         return 'Game has not completed'
     else:
@@ -27,7 +27,7 @@ def lines_of_four(grid):
     Args:
         Iterable of strings representing a grid.
     Returns:
-        Iterable containing a string for each line of four within grid.
+        Iterable containing iterables for each line of four within grid.
     """
     diagonal_a = (row[i]
                   for i, row in enumerate(grid))
@@ -46,16 +46,16 @@ def winning(line):
     """Return whether line results in a win, and if so for whom.
 
     Args:
-        String representing line in game grid.
+        Iterable representing line in game grid.
     Returns:
         'X' or 'O' if winning position, else None.
     """
-    c = Counter(line)
+    count = Counter(line)
 
-    if c['.'] or (c['X'] and c['O']):
+    if count['.'] or (count['X'] and count['O']):
         return None
     else:
-        return 'X' if c['X'] else 'O'
+        return 'X' if count['X'] else 'O'
 
 
 def main():
